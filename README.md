@@ -1,94 +1,44 @@
-@app.delete("/history")
-def clear_history(db: Session = Depends(get_db)):
+# IOC Threat Assessment Agent
 
-    db.query(AnalysisHistory).delete()
+FastAPI + SQLite + Streamlit MVP for IOC enrichment using VirusTotal and AbuseIPDB.
 
-    db.query(IOCCache).delete()
+## Features
+- Single IOC analysis
+- Bulk CSV/XLSX analysis
+- IOC classifier: IP, URL, domain, MD5, SHA1, SHA256
+- SQLite cache with TTL
+- Analysis history
+- Unified risk score and verdict
+- Streamlit minimal UI
 
-    db.commit()
+## Setup
 
-    return {
-        "message": "History and cache cleared successfully."
-    }
+```bash
+python -m venv .venv
+# Windows: .venv\Scripts\activate
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+```
 
-    
+Edit `.env` and add API keys.
 
-    elif page == "History":
+## Run backend
 
-    st.subheader(
-        "Analysis History"
-    )
+```bash
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
 
-    limit = st.slider(
-        "Rows",
-        10,
-        500,
-        50
-    )
+## Run UI
 
-    col1, col2 = st.columns(2)
+```bash
+streamlit run ui/streamlit_app.py
+```
 
-    refresh_clicked = col1.button(
-        "Refresh History"
-    )
+## API examples
 
-    delete_clicked = col2.button(
-        "Delete History",
-        type="secondary"
-    )
+```bash
+curl -X POST http://127.0.0.1:8000/analyze   -H "Content-Type: application/json"   -d '{"ioc":"8.8.8.8"}'
+```
 
-    if delete_clicked:
-
-        response = requests.delete(
-            f"{API_BASE}/history",
-            timeout=30
-        )
-
-        if response.ok:
-
-            st.success(
-                response.json()["message"]
-            )
-
-            st.rerun()
-
-        else:
-
-            st.error(
-                response.text
-            )
-
-    resp = requests.get(
-        f"{API_BASE}/history",
-        params={
-            "limit": limit
-        },
-        timeout=30
-    )
-
-    if resp.ok:
-
-        df = pd.DataFrame(
-            resp.json()
-        )
-
-        if df.empty:
-
-            st.info(
-                "No analysis history found."
-            )
-
-        else:
-
-            st.dataframe(
-                df,
-                use_container_width=True
-            )
-
-    else:
-
-        st.error(
-            resp.text
-        )
-
-        
+Bulk CSV must contain either an `ioc` column or the IOC values in the first column.
