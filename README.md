@@ -1,1 +1,1 @@
-44d88612fea8a8f36de82e1278abb02f
+{"virustotal":{"source":"virustotal","available":true,"cached":false,"data":{"available":true,"found":true,"stats":{"malicious":65,"suspicious":0,"harmless":0,"undetected":2},"reputation":3785,"tags":["direct-cpu-clock-access","via-tor","powershell","attachment","detect-debug-environment","known-distributor","long-sleeps","idle"],"last_analysis_date":1783429113},"error":null}}
